@@ -4,7 +4,11 @@
   "private": true,
   "description": "Prototipo estatico navegable para presentacion universitaria.",
   "scripts": {
-    "build": "node scripts/build-static.js",
-    "dev": "node scripts/dev-server.js"
+    "dev": "vite",
+    "build": "vite build",
+    "preview": "vite preview"
+  },
+  "devDependencies": {
+    "vite": "^8.0.16"
   }
 }

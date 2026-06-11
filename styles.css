@@ -77,7 +77,7 @@ button {
   color: #fff;
   background:
     linear-gradient(180deg, rgba(0, 26, 77, 0) 0%, rgba(0, 22, 64, 0.2) 35%, rgba(0, 15, 44, 0.88) 75%, rgba(0, 10, 32, 0.98) 100%),
-    url("./assets/login-mountains.png") center bottom / auto 120% no-repeat,
+    url("./public/assets/login-mountains.png") center bottom / auto 120% no-repeat,
     linear-gradient(180deg, #0b438b 0%, #00133c 100%);
   position: relative;
 }
