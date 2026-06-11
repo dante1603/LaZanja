@@ -1,4 +1,4 @@
-import { createApp } from "./src/router.js";
+import { createApp } from "./router.js";
 
 const app = document.querySelector("#app");
 

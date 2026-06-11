@@ -7,7 +7,7 @@
   "trailingSlash": false,
   "rewrites": [
     {
-      "source": "/((?!app\\.js|styles\\.css|src/.*|assets/.*).*)",
+      "source": "/((?!styles\\.css|src/.*|assets/.*).*)",
       "destination": "/index.html"
     }
   ],
