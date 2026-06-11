@@ -32,6 +32,19 @@ npm run build
 
 El build copia la app estatica a `dist/`, que es la carpeta que Vercel publica.
 
+Para probar localmente exactamente la carpeta que Vercel debe publicar:
+
+```powershell
+$env:STATIC_ROOT = "dist"
+npm run dev
+```
+
+Luego abrir:
+
+```text
+http://localhost:4173
+```
+
 ## Subir a Vercel desde GitHub
 
 Este repositorio esta preparado como sitio estatico. No requiere base de datos, variables de entorno ni backend.
@@ -45,6 +58,8 @@ Este repositorio esta preparado como sitio estatico. No requiere base de datos, 
    - Output Directory: `dist`.
    - Install Command: vacio o `npm install`.
 5. Deploy.
+
+El archivo `vercel.json` ya fija `buildCommand: npm run build` y `outputDirectory: dist`. Si Vercel muestra un error `FUNCTION_INVOCATION_FAILED`, revisar que el proyecto este usando este commit/configuracion y no una configuracion anterior con `.vercel/output` o funciones.
 
 La URL generada por Vercel se puede compartir directamente con el profesor. Como la navegacion usa hash routes (`#home`, `#qr`, etc.), no hace falta configurar rutas dinamicas ni funciones serverless.
 

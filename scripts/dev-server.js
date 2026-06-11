@@ -3,7 +3,8 @@ const fs = require("fs");
 const path = require("path");
 
 const port = Number(process.env.PORT || 4173);
-const root = path.resolve(__dirname, "..");
+const projectRoot = path.resolve(__dirname, "..");
+const root = path.resolve(projectRoot, process.env.STATIC_ROOT || ".");
 const types = {
   ".html": "text/html; charset=utf-8",
   ".css": "text/css; charset=utf-8",
@@ -38,4 +39,5 @@ http
   })
   .listen(port, () => {
     console.log(`La Grieta prototype running at http://localhost:${port}`);
+    console.log(`Serving ${path.relative(projectRoot, root) || "."}`);
   });
