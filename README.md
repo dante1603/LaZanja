@@ -1,4 +1,4 @@
-# La Zanja - prototipo app viajero
+# La Grieta - prototipo app viajero
 
 Prototipo funcional mobile-first para probar en navegador el flujo del viajero:
 
@@ -13,7 +13,7 @@ Prototipo funcional mobile-first para probar en navegador el flujo del viajero:
 ## Ejecutar en localhost
 
 ```powershell
-node server.js
+npm run dev
 ```
 
 Luego abrir:
@@ -23,6 +23,30 @@ http://localhost:4173
 ```
 
 La app no incluye panel de funcionarios ni funciones internas. Todo el estado es local y simulado para testear el flujo de usuario.
+
+## Probar build de Vercel
+
+```powershell
+npm run build
+```
+
+El build copia la app estatica a `dist/`, que es la carpeta que Vercel publica.
+
+## Subir a Vercel desde GitHub
+
+Este repositorio esta preparado como sitio estatico. No requiere base de datos, variables de entorno ni backend.
+
+1. Subir el repositorio a GitHub.
+2. En Vercel, elegir `Add New...` -> `Project`.
+3. Importar el repositorio desde GitHub.
+4. Dejar la configuracion asi:
+   - Framework Preset: `Other`.
+   - Build Command: `npm run build`.
+   - Output Directory: `dist`.
+   - Install Command: vacio o `npm install`.
+5. Deploy.
+
+La URL generada por Vercel se puede compartir directamente con el profesor. Como la navegacion usa hash routes (`#home`, `#qr`, etc.), no hace falta configurar rutas dinamicas ni funciones serverless.
 
 ## Estructura del prototipo
 

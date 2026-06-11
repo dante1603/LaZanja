@@ -1,0 +1,11 @@
+{
+  "name": "la-grieta-prototipo",
+  "version": "0.1.0",
+  "private": true,
+  "description": "Prototipo estatico navegable para presentacion universitaria.",
+  "scripts": {
+    "build": "node scripts/build-static.js",
+    "dev": "node server.js",
+    "start": "node server.js"
+  }
+}
