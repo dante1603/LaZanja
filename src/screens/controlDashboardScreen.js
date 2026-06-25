@@ -1,4 +1,4 @@
-import { appFrame, topbar } from "../components/chrome.js";
+import { appFrame, frameOptions, topbar } from "../components/chrome.js";
 import { STATUS, getOfficerStatusLabel } from "../state/appState.js";
 
 function metric(label, value, colorClass = "") {
@@ -80,7 +80,7 @@ export function controlDashboardScreen(state) {
   }
 
   return appFrame(`
-    ${topbar("Turno Paso Los Libertadores", { back: false, menu: true })}
+    ${topbar("Turno Paso Los Libertadores", { back: false, menu: true, role: state.role })}
     <section class="content stack control-space">
       <article class="card summary-card" style="padding-bottom: 16px;">
         <div class="row">
@@ -167,5 +167,5 @@ export function controlDashboardScreen(state) {
         </button>
       </div>
     </section>
-  `, state.screen, false);
+  `, state.screen, frameOptions(state, false));
 }

@@ -1,40 +1,154 @@
-import { appFrame, topbar } from "../components/chrome.js";
-import { STATUS, statusLabels } from "../state/appState.js";
+import { appFrame, frameOptions, topbar } from "../components/chrome.js";
+import { STATUS, statusLabels, hasRequiredDocs, hasTripBasics } from "../state/appState.js";
 
 export function homeScreen(state) {
   const isApproved = state.status === STATUS.approved;
-  const isSubmitted = state.status !== STATUS.draft;
-
-  // Let's decide if there's an active/started trámite
   const hasActiveTramite = state.status !== STATUS.draft || state.tripStarted;
 
+  // ----------------------------------------------------
+  // CASE A: NEW USER (ONBOARDING)
+  // ----------------------------------------------------
   if (!hasActiveTramite) {
-    // ----------------------------------------------------
-    // CASE A: NO ACTIVE TRÁMITE (DRAFT/EMPTY)
-    // ----------------------------------------------------
     return appFrame(`
-      ${topbar("Inicio", { back: false, menu: true })}
+      ${topbar("Inicio", { back: false, menu: true, role: state.role })}
       <section class="content">
-        <div class="no-tramite-container">
-          <div class="no-tramite-icon-wrapper">
-            <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.3" stroke-linecap="round" stroke-linejoin="round">
-              <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-              <line x1="16" y1="2" x2="16" y2="6"></line>
-              <line x1="8" y1="2" x2="8" y2="6"></line>
-              <line x1="3" y1="10" x2="21" y2="10"></line>
-            </svg>
+        <article class="onboarding-hero">
+          <div class="onboarding-hero-title-row">
+            <div class="onboarding-hero-icon">
+              <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                <polyline points="22 4 12 14.01 9 11.01"></polyline>
+              </svg>
+            </div>
+            <h2>Prepara tu cruce fronterizo</h2>
           </div>
-          <div class="no-tramite-text">
-            <h2>Aún no tienes un trámite activo</h2>
-            <p>Registra tu viaje antes de llegar al complejo fronterizo.</p>
+          <p>Completa tu información antes de llegar al complejo y genera tu QR de atención.</p>
+          <div class="onboarding-hero-ctas">
+            <button class="btn" data-go="trip">Iniciar primer trámite</button>
+            <button class="btn secondary" data-go="detail">Ver requisitos</button>
           </div>
-          <button class="btn" data-go="trip" style="width: 100%;">
-            Registrar viaje
-          </button>
+        </article>
+
+        <div class="onboarding-steps-section">
+          <div class="onboarding-steps-section-title">Tu trámite se completa en 3 pasos</div>
+          <div class="onboarding-steps-grid">
+            <div class="onboarding-step-card">
+              <span class="onboarding-step-number">1</span>
+              <span class="onboarding-step-title">Datos<br>del viaje</span>
+            </div>
+            <div class="onboarding-step-card">
+              <span class="onboarding-step-number">2</span>
+              <span class="onboarding-step-title">Personas y<br>documentos</span>
+            </div>
+            <div class="onboarding-step-card">
+              <span class="onboarding-step-number">3</span>
+              <span class="onboarding-step-title">Declaración<br>y QR</span>
+            </div>
+          </div>
         </div>
 
-        <h3 class="section-title" style="color: #ffffff;">Antes de viajar</h3>
-        <div class="quick-grid double">
+        <div class="section-title">Antes de comenzar ten a mano:</div>
+        <div class="onboarding-requirements-grid">
+          <div class="onboarding-requirement-item">
+            <div class="onboarding-requirement-icon">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
+                <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
+              </svg>
+            </div>
+            <span class="onboarding-requirement-text">Documento de<br>identidad</span>
+          </div>
+          <div class="onboarding-requirement-item">
+            <div class="onboarding-requirement-icon green">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M19 17h2c.6 0 1-.4 1-1v-3c0-.9-.7-1.7-1.5-1.9C18.7 10.6 16 10 16 10s-1.3-1.4-2.2-2.3c-.5-.4-1.1-.7-1.8-.7H5c-.6 0-1.1.4-1.4.9l-1.4 2.9A3.7 3.7 0 0 0 2 12v4c0 .6.4 1 1 1h2"></path>
+                <circle cx="7" cy="17" r="2"></circle>
+                <circle cx="17" cy="17" r="2"></circle>
+              </svg>
+            </div>
+            <span class="onboarding-requirement-text">Datos del<br>vehículo</span>
+          </div>
+          <div class="onboarding-requirement-item">
+            <div class="onboarding-requirement-icon purple">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                <circle cx="9" cy="7" r="4"></circle>
+              </svg>
+            </div>
+            <span class="onboarding-requirement-text">Permisos de<br>menores</span>
+          </div>
+          <div class="onboarding-requirement-item">
+            <div class="onboarding-requirement-icon orange">
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.58 1 9.2a7.5 7.5 0 0 1-9 8.8z"></path>
+                <path d="M19 2L9.8 11.2"></path>
+              </svg>
+            </div>
+            <span class="onboarding-requirement-text">Productos a<br>declarar (SAG)</span>
+          </div>
+        </div>
+      </section>
+    `, state.screen, frameOptions(state));
+  }
+
+  // ----------------------------------------------------
+  // CASE C: TRÁMITE FINALIZADO (APPROVED)
+  // ----------------------------------------------------
+  if (isApproved) {
+    return appFrame(`
+      ${topbar("Inicio", { back: false, menu: true, role: state.role })}
+      <section class="content">
+        <article class="card summary-card">
+          <div class="row" style="margin-bottom: 10px;">
+            <div class="row" style="justify-content:start; gap: 10px;">
+              <div class="circle-icon-bg green-bg" style="background: #e6f7ed; color: #28aa6e;">
+                <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+                  <polyline points="22 4 12 14.01 9 11.01"></polyline>
+                </svg>
+              </div>
+              <h2 style="margin:0;font-size:16.5px;font-weight:750;color:var(--ink)">Tu QR está listo</h2>
+            </div>
+            <span class="badge ok">Aprobado</span>
+          </div>
+          <div class="row small" style="margin-top: 10px; margin-bottom: 4px;">
+            <span style="font-weight:500;color:var(--muted)">Progreso del trámite</span><strong style="font-size:14px;color:var(--ink)">4 / 4</strong>
+          </div>
+          <div class="progress">
+            <span class="done"></span>
+            <span class="done"></span>
+            <span class="done"></span>
+            <span class="done"></span>
+          </div>
+          <div class="row success-alert-box">
+            <svg class="alert-icon" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5">
+              <path d="M22 11.08V12a10 10 0 1 1-5.93-9.14"></path>
+              <polyline points="22 4 12 14.01 9 11.01"></polyline>
+            </svg>
+            <p class="alert-text">Tu trámite ha sido aprobado. QR disponible para cruce.</p>
+          </div>
+          
+          <div style="display: flex; flex-direction: column; gap: 8px; margin-top: 14px;">
+            <button class="btn" data-go="qr" style="width: 100%; display: flex; align-items: center; justify-content: center; gap: 6px;">
+              Mostrar QR
+              <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="9 18 15 12 9 6"></polyline>
+              </svg>
+            </button>
+            <button class="btn secondary" data-go="detail" style="width: 100%; margin: 0; background: #f1f5f9 !important; color: #0f172a !important; border-color: #e2e8f0 !important;">
+              Ver resumen del trámite
+            </button>
+          </div>
+        </article>
+
+        <h3 class="section-title" style="color: #ffffff;">Acciones recomendadas</h3>
+        <div class="quick-grid recommended-grid">
+          <button class="quick-action" data-go="qr">
+            <span class="circle" style="background:#0d63f3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="7" height="7" rx="1"></rect><rect x="14" y="3" width="7" height="7" rx="1"></rect><rect x="3" y="14" width="7" height="7" rx="1"></rect><rect x="14" y="14" width="3" height="3" rx="0.5" fill="white"></rect><rect x="18" y="18" width="3" height="3" rx="0.5" fill="white"></rect><rect x="14" y="18" width="3" height="3" rx="0.5" fill="white"></rect><rect x="18" y="14" width="3" height="3" rx="0.5" fill="white"></rect></svg>
+            </span>
+            <span>Mi QR</span>
+          </button>
           <button class="quick-action" data-go="detail">
             <span class="circle" style="background:#0d63f3">
               <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
@@ -45,24 +159,27 @@ export function homeScreen(state) {
                 <line x1="9" y1="19" x2="15" y2="19"></line>
               </svg>
             </span>
-            <span>Requisitos</span>
+            <span>Seguimiento</span>
           </button>
           <button class="quick-action" data-action="go-trip-sag">
             <span class="circle" style="background:#24a148">
-              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
-                <path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.58 1 9.2a7.5 7.5 0 0 1-9 8.8z"></path>
-                <path d="M19 2L9.8 11.2"></path>
-              </svg>
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M11 20A7 7 0 0 1 9.8 6.1C15.5 5 17 4.48 19 2c1 2 2 3.58 1 9.2a7.5 7.5 0 0 1-9 8.8z"></path><path d="M19 2L9.8 11.2"></path></svg>
             </span>
-            <span>Declaración SAG</span>
+            <span>Declaración<br/>SAG</span>
+          </button>
+          <button class="quick-action" data-go="history">
+            <span class="circle" style="background:#0d63f3">
+              <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="white" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+            </span>
+            <span>Historial</span>
           </button>
         </div>
       </section>
-    `, state.screen);
+    `, state.screen, frameOptions(state));
   }
 
   // ----------------------------------------------------
-  // CASE B: ACTIVE/STARTED TRÁMITE (draft in-progress, submitted, underReview, approved, rejected, needsFix)
+  // CASE B: TRÁMITE ACTIVO (DRAFT IN PROGRESS, SUBMITTED, UNDER REVIEW, NEEDS FIX, REJECTED)
   // ----------------------------------------------------
   let progressText = "3 / 4";
   let progressBarsHtml = `
@@ -161,7 +278,7 @@ export function homeScreen(state) {
   }
 
   return appFrame(`
-    ${topbar("Inicio", { back: false, menu: true })}
+    ${topbar("Inicio", { back: false, menu: true, role: state.role })}
     <section class="content">
       <article class="card summary-card">
         <div class="row" style="margin-bottom: 10px;">
@@ -175,9 +292,9 @@ export function homeScreen(state) {
                 <line x1="9" y1="8" x2="15" y2="8"></line>
               </svg>
             </div>
-            <h2 style="margin:0;font-size:16.5px;font-weight:750;color:var(--ink)">Mi trámite</h2>
+            <h2 style="margin:0;font-size:16.5px;font-weight:750;color:var(--ink)">Tienes un trámite en curso</h2>
           </div>
-          <span class="badge ${isApproved ? 'ok' : 'yellow-badge'}">${statusLabels[state.status]}</span>
+          <span class="badge yellow-badge">${statusLabels[state.status]}</span>
         </div>
         <div class="row small" style="margin-top: 10px; margin-bottom: 4px;">
           <span style="font-weight:500;color:var(--muted)">Progreso del trámite</span><strong style="font-size:14px;color:var(--ink)">${progressText}</strong>
@@ -256,5 +373,5 @@ export function homeScreen(state) {
         </button>
       </div>
     </section>
-  `, state.screen);
+  `, state.screen, frameOptions(state));
 }

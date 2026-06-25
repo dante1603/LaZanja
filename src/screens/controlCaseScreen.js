@@ -1,4 +1,4 @@
-import { appFrame, topbar } from "../components/chrome.js";
+import { appFrame, frameOptions, topbar } from "../components/chrome.js";
 import { selectedSagItems } from "../components/sag.js";
 import { qrPayload, statusLabels } from "../state/appState.js";
 import { formatDate } from "../utils/format.js";
@@ -15,7 +15,7 @@ export function controlCaseScreen(state) {
   const sagItems = selectedSagItems(state);
 
   return appFrame(`
-    ${topbar("Ficha de tramite", { backTo: "controlQueue" })}
+    ${topbar("Ficha de tramite", { backTo: "controlQueue", role: state.role })}
     <section class="content stack control-space">
       <article class="card summary-card">
         <div class="row">
@@ -77,5 +77,5 @@ export function controlCaseScreen(state) {
         </ol>
       `)}
     </section>
-  `, state.screen, false);
+  `, state.screen, frameOptions(state, false));
 }

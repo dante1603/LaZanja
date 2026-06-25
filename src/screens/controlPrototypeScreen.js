@@ -1,4 +1,4 @@
-import { appFrame, topbar } from "../components/chrome.js";
+import { appFrame, frameOptions, topbar } from "../components/chrome.js";
 
 function serviceStatus(name, isOnline = true) {
   return `
@@ -31,7 +31,7 @@ function roleCard(title, description, isActive, switchRole = null) {
 
 export function controlPrototypeScreen(state) {
   return appFrame(`
-    ${topbar("Panel del Prototipo", { backTo: "control" })}
+    ${topbar("Panel del Prototipo", { backTo: "control", role: state.role })}
     <section class="content stack control-space">
       
       <article class="card summary-card">
@@ -86,5 +86,5 @@ export function controlPrototypeScreen(state) {
       </article>
 
     </section>
-  `, state.screen, false);
+  `, state.screen, frameOptions(state, false));
 }

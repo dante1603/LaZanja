@@ -10,8 +10,9 @@ import {
   updateMinorDocStatus,
 } from "./state/appState.js";
 import { selectedSagItems } from "./components/sag.js";
-import { formatDate } from "./utils/format.js";
 import { drawQr } from "./qr/drawQr.js";
+import { downloadReceipt } from "./services/receiptService.js";
+import { createQrScanner } from "./services/qrScannerService.js";
 import { loginScreen } from "./screens/loginScreen.js";
 import { homeScreen } from "./screens/homeScreen.js";
 import { tripScreen } from "./screens/tripScreen.js";
@@ -44,7 +45,14 @@ const travelerRoutes = new Set(["home", "trip", "docs", "detail", "qr", "history
 const officerRoutes = new Set(["control", "controlQueue", "controlCase", "controlReports", "controlPrototype"]);
 
 export function createApp(root) {
-  let scanTimeout = null;
+  const qrScanner = createQrScanner({
+    onComplete() {
+      if (state.scanningQr) {
+        state.scanningQr = false;
+        go("controlCase");
+      }
+    },
+  });
   function go(screen) {
     state.screen = normalizeScreen(screen);
     if (state.screen === "trip") {
@@ -192,19 +200,13 @@ export function createApp(root) {
     if (target.dataset.action === "start-qr-scan") {
       state.scanningQr = true;
       render();
-      if (scanTimeout) clearTimeout(scanTimeout);
-      scanTimeout = setTimeout(() => {
-        if (state.scanningQr) {
-          state.scanningQr = false;
-          go("controlCase");
-        }
-      }, 1500);
+      qrScanner.start();
       return;
     }
 
     if (target.dataset.action === "cancel-qr-scan") {
       state.scanningQr = false;
-      if (scanTimeout) clearTimeout(scanTimeout);
+      qrScanner.stop();
       return render();
     }
 
@@ -378,7 +380,7 @@ export function createApp(root) {
     if (target.dataset.sag) return toggleSagProduct(target.dataset.sag);
     if (target.dataset.submitCase) return submitCase();
     if (target.dataset.officerAction) return officerAction(target.dataset.officerAction);
-    if (target.dataset.download) return downloadReceipt(target.dataset.download === "true" ? null : target.dataset.download);
+    if (target.dataset.download) return downloadReceipt(target.dataset.download === "true" ? null : target.dataset.download, state);
   });
 
   root.addEventListener("change", event => {
@@ -502,25 +504,6 @@ export function createApp(root) {
     }
     persistState();
     return go("controlCase");
-  }
-
-  function downloadReceipt(caseId) {
-    let txt = "";
-    let filename = "comprobante-la-zanja.txt";
-    if (caseId === "LZA-2026-00065412") {
-      txt = `Comprobante La Zanja\nTramite: LZA-2026-00065412\nEstado: Usado en control\nFecha: 2026-06-12\nDestino: Mendoza, Argentina\nVehiculo: AB-CD-12\nCruce realizado con exito el 12 de junio de 2026.`;
-      filename = "comprobante-LZA-2026-00065412.txt";
-    } else {
-      txt = `Comprobante La Zanja\nTramite: ${state.caseId}\nEstado: ${state.status}\nFecha: ${formatDate(state.trip.date)}\nDestino: ${state.trip.destination}\nVehiculo: ${state.trip.plate}`;
-      filename = `comprobante-${state.caseId}.txt`;
-    }
-    const blob = new Blob([txt], { type: "text/plain" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = filename;
-    link.click();
-    URL.revokeObjectURL(url);
   }
 
   root.addEventListener("click", event => {

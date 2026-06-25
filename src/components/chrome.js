@@ -1,13 +1,11 @@
-import { state } from "../state/appState.js";
-
 export function statusbar(dark = false) {
   return ``;
 }
 
 export function topbar(title, options = {}) {
-  const { back = true, menu = false } = options;
+  const { back = true, menu = false, role = "traveler" } = options;
   
-  const isTraveler = state.role !== "officer";
+  const isTraveler = role !== "officer";
   
   const rightSide = isTraveler ? `
     <div style="display: flex; gap: 8px; align-items: center;">
@@ -166,9 +164,19 @@ export function bottomNav(currentScreen) {
   </nav>`;
 }
 
-export function appFrame(inner, currentScreen, nav = true) {
+export function frameOptions(state, nav = true) {
+  return {
+    nav,
+    accessibility: state.accessibility || {},
+    showAccessibilityPanel: Boolean(state.showAccessibilityPanel),
+    showLogoutConfirmModal: Boolean(state.showLogoutConfirmModal),
+  };
+}
+
+export function appFrame(inner, currentScreen, options = true) {
   const isHome = currentScreen === "home";
-  const accessibility = state.accessibility || {};
+  const frame = typeof options === "boolean" ? { nav: options } : { nav: true, ...options };
+  const accessibility = frame.accessibility || {};
   const accessibilityClasses = [
     accessibility.highContrast ? "access-high-contrast" : "",
     accessibility.largeText ? "access-large-text" : "",
@@ -183,15 +191,15 @@ export function appFrame(inner, currentScreen, nav = true) {
       <div class="screen ${isHome ? "gradient-bg" : ""} ${accessibilityClasses}">
         ${statusbar(false)}
         ${inner}
-        ${nav ? bottomNav(currentScreen) : ""}
-        ${state.showAccessibilityPanel ? renderAccessibilityPanel() : ""}
-        ${renderLogoutConfirmModal()}
+        ${frame.nav ? bottomNav(currentScreen) : ""}
+        ${frame.showAccessibilityPanel ? renderAccessibilityPanel(accessibility) : ""}
+        ${renderLogoutConfirmModal(frame.showLogoutConfirmModal)}
       </div>
     </section>`;
 }
 
-function renderLogoutConfirmModal() {
-  const isActive = state.showLogoutConfirmModal ? "active" : "";
+function renderLogoutConfirmModal(showLogoutConfirmModal) {
+  const isActive = showLogoutConfirmModal ? "active" : "";
   return `
     <div id="logout-modal-overlay" class="bottom-sheet-overlay ${isActive}">
       <div class="bottom-sheet" style="border-radius: 24px 24px 18px 18px; padding-bottom: 8px;">
@@ -221,9 +229,7 @@ function renderLogoutConfirmModal() {
   `;
 }
 
-function renderAccessibilityPanel() {
-  const accessibility = state.accessibility || {};
-  
+function renderAccessibilityPanel(accessibility) {
   return `
     <aside class="accessibility-panel" role="dialog" aria-modal="true" aria-labelledby="accessibility-title">
       <div class="accessibility-panel-card">

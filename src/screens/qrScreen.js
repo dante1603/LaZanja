@@ -1,31 +1,46 @@
-import { appFrame, topbar } from "../components/chrome.js";
+import { appFrame, frameOptions, topbar } from "../components/chrome.js";
 import { detailRow } from "../components/forms.js";
-import { qrPayload, STATUS, statusLabels } from "../state/appState.js";
+import { qrPayload, STATUS, statusLabels, hasTripBasics } from "../state/appState.js";
 import { formatDate } from "../utils/format.js";
 
 export function qrScreen(state) {
   const isApproved = state.status === STATUS.approved;
 
   if (!isApproved) {
+    const hasBasics = hasTripBasics(state);
+    const isUnderReview = state.status === STATUS.submitted || state.status === STATUS.underReview;
+    const isRejected = state.status === STATUS.rejected;
+    
+    let boxText = "Tu QR estará disponible cuando termines tu trámite.";
+    let buttonText = "Completar trámite";
+    let buttonGo = hasBasics ? "docs" : "trip";
+    
+    if (isUnderReview) {
+      boxText = `Tu trámite está en revisión. El QR se activará cuando el funcionario apruebe el cruce.`;
+      buttonText = "Ver seguimiento";
+      buttonGo = "detail";
+    } else if (isRejected) {
+      boxText = `Tu trámite ha sido rechazado por la autoridad. Revisa las observaciones.`;
+      buttonText = "Ver seguimiento";
+      buttonGo = "detail";
+    }
+
     return appFrame(`
-      ${topbar("Mi QR", { backTo: "home" })}
+      ${topbar("Mi QR", { backTo: "home", role: state.role })}
       <section class="content">
-        <article class="card soft" style="padding:24px 20px;text-align:center;margin-top:20px;display:grid;justify-items:center;gap:18px">
-          <div class="circle" style="width:68px;height:68px;display:grid;place-items:center;border-radius:50%;color:#d07b00;background:#fff6e5;border:1px solid #ffd5a1">
+        <article class="empty-state-box">
+          <div class="empty-state-icon yellow">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
               <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
               <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
             </svg>
           </div>
-          <div>
-            <h2 style="margin:0 0 8px;font-size:19px;font-weight:800;color:var(--ink)">Codigo QR no disponible</h2>
-            <p class="muted" style="margin:0;font-size:14px;line-height:1.45">Tu tramite <strong>${state.caseId}</strong> esta en estado <strong>${statusLabels[state.status]}</strong>.</p>
-          </div>
-          <p class="muted" style="margin:0;font-size:13px;line-height:1.4">El QR se activa solamente cuando el funcionario aprueba el cruce.</p>
-          <button class="btn" data-go="detail" style="margin-top:8px">Ver seguimiento</button>
+          <h3>Código QR no disponible</h3>
+          <p style="text-align: center; font-size: 13.5px; color: var(--muted); line-height: 1.45; max-width: 250px;">${boxText}</p>
+          <button class="btn" data-go="${buttonGo}" style="margin-top: 8px;">${buttonText}</button>
         </article>
       </section>
-    `, state.screen);
+    `, state.screen, frameOptions(state));
   }
 
   const activeTab = state.qrActiveTab || "qr";
@@ -107,7 +122,7 @@ export function qrScreen(state) {
   }
 
   return appFrame(`
-    ${topbar("Mi QR", { backTo: "home" })}
+    ${topbar("Mi QR", { backTo: "home", role: state.role })}
     <section class="content">
       <div class="status-bar-card">
         <span class="status-badge approved">
@@ -144,6 +159,5 @@ export function qrScreen(state) {
       </button>
       <button class="btn secondary" data-go="detail" style="margin-top:10px">Ver detalle</button>
     </section>
-  `, state.screen);
+  `, state.screen, frameOptions(state));
 }
-

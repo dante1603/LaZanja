@@ -1,4 +1,4 @@
-import { appFrame, topbar } from "../components/chrome.js";
+import { appFrame, frameOptions, topbar } from "../components/chrome.js";
 import { STATUS } from "../state/appState.js";
 
 function reportRow(label, value) {
@@ -12,7 +12,7 @@ export function controlReportsScreen(state) {
   const rejectedCount = state.status === STATUS.rejected ? 1 : 0;
 
   return appFrame(`
-    ${topbar("Reportes operativos", { backTo: "control" })}
+    ${topbar("Reportes operativos", { backTo: "control", role: state.role })}
     <section class="content stack control-space">
       <article class="card summary-card">
         <h2 style="margin:0 0 12px; font-size: 15px; font-weight: 800; color: var(--ink);">Métricas consolidadas</h2>
@@ -74,5 +74,5 @@ export function controlReportsScreen(state) {
         </div>
       </article>
     </section>
-  `, state.screen, false);
+  `, state.screen, frameOptions(state, false));
 }

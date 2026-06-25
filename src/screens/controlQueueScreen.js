@@ -1,4 +1,4 @@
-import { appFrame, topbar } from "../components/chrome.js";
+import { appFrame, frameOptions, topbar } from "../components/chrome.js";
 import { STATUS, getOfficerStatusLabel } from "../state/appState.js";
 import { formatDate } from "../utils/format.js";
 
@@ -129,7 +129,7 @@ export function controlQueueScreen(state) {
   ` : "";
 
   return appFrame(`
-    ${topbar("Bandeja de trámites", { backTo: "control" })}
+    ${topbar("Bandeja de trámites", { backTo: "control", role: state.role })}
     <section class="content stack control-space" style="position: relative;">
       
       <div class="search-bar-row">
@@ -168,5 +168,5 @@ export function controlQueueScreen(state) {
 
       ${scannerOverlayHtml}
     </section>
-  `, state.screen, false);
+  `, state.screen, frameOptions(state, false));
 }

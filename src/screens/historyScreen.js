@@ -1,4 +1,4 @@
-import { appFrame, topbar } from "../components/chrome.js";
+import { appFrame, frameOptions, topbar } from "../components/chrome.js";
 import { formatDate } from "../utils/format.js";
 
 function renderActiveCaseCard(state) {
@@ -6,6 +6,26 @@ function renderActiveCaseCard(state) {
   const isDraft = state.status === "draft";
   const isNeedsFix = state.status === "needs_fix";
   const isRejected = state.status === "rejected";
+  
+  const hasActiveTramite = state.status !== "draft" || state.tripStarted;
+  if (!hasActiveTramite) {
+    return `
+      <div class="section-title">Trámites activos</div>
+      <article class="empty-state-box">
+        <div class="empty-state-icon">
+          <svg width="28" height="28" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+            <line x1="16" y1="2" x2="16" y2="6"></line>
+            <line x1="8" y1="2" x2="8" y2="6"></line>
+            <line x1="3" y1="10" x2="21" y2="10"></line>
+          </svg>
+        </div>
+        <h3>Aún no tienes trámites registrados</h3>
+        <p style="text-align: center; font-size: 13.5px; color: var(--muted); line-height: 1.45; max-width: 250px;">Cuando completes uno, aparecerá aquí para que puedas revisar su estado.</p>
+        <button class="btn" data-go="trip" style="margin-top: 8px;">Crear trámite</button>
+      </article>
+    `;
+  }
   
   if (isDraft) {
     const pendingDocs = state.docs.filter(d => d.type === "pending" || d.status === "Pendiente");
@@ -107,7 +127,7 @@ export function historyScreen(state) {
       }
     </style>
     
-    ${topbar("Mis trámites", { backTo: "home" })}
+    ${topbar("Mis trámites", { backTo: "home", role: state.role })}
     <section class="content stack" style="gap: 4px;">
       ${activeCardHtml}
       
@@ -121,5 +141,5 @@ export function historyScreen(state) {
         <button class="btn secondary" data-download="LZA-2026-00065412" style="margin-top: 12px;">Ver comprobante</button>
       </article>
     </section>
-  `, state.screen);
+  `, state.screen, frameOptions(state));
 }

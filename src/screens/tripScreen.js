@@ -1,4 +1,4 @@
-import { appFrame, stepper, topbar } from "../components/chrome.js";
+import { appFrame, frameOptions, stepper, topbar } from "../components/chrome.js";
 import { selectedSagItems, productCard } from "../components/sag.js";
 
 function getMinorsCardHtml(state) {
@@ -378,7 +378,7 @@ export function tripScreen(state) {
 
   return appFrame(`
     <div class="header-group">
-      ${topbar("Registrar viaje", { backTo: "home" })}
+      ${topbar("Registrar viaje", { backTo: "home", role: state.role })}
       ${stepper(["Viaje", "Documentos", "Seguimiento"], 1)}
     </div>
     <section class="sheet">
@@ -419,5 +419,5 @@ export function tripScreen(state) {
     </section>
     ${getMinorsModalHtml(state)}
     ${getSagModalHtml(state)}
-  `, state.screen);
+  `, state.screen, frameOptions(state));
 }

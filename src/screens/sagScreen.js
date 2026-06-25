@@ -1,11 +1,11 @@
-import { appFrame, stepper, topbar } from "../components/chrome.js";
+import { appFrame, frameOptions, stepper, topbar } from "../components/chrome.js";
 import { productCard, selectedSagItems } from "../components/sag.js";
 
 export function sagScreen(state) {
   const selected = selectedSagItems(state);
   return appFrame(`
     <div class="header-group">
-      ${topbar("Declaracion SAG", { backTo: "docs" })}
+      ${topbar("Declaracion SAG", { backTo: "docs", role: state.role })}
       ${stepper(["Viaje", "Documentos", "Declaración SAG", "Seguimiento"], 3)}
     </div>
     <section class="sheet sag-sheet">
@@ -84,5 +84,5 @@ export function sagScreen(state) {
         <button class="btn" data-submit-case="true">Enviar a revision</button>
       </div>
     </section>
-  `, state.screen);
+  `, state.screen, frameOptions(state));
 }

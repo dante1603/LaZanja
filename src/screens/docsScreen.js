@@ -1,16 +1,12 @@
-import { appFrame, stepper, topbar } from "../components/chrome.js";
+import { appFrame, frameOptions, stepper, topbar } from "../components/chrome.js";
 import { docRow } from "../components/documents.js";
 import { getMinorsModalHtml, getSagModalHtml } from "./tripScreen.js";
-import { STATUS, requiredDocs } from "../state/appState.js";
+import { STATUS } from "../state/appState.js";
 import { selectedSagItems } from "../components/sag.js";
+import { getDocumentProgress, getVisibleTripDocuments } from "../services/documentSummaryService.js";
 
 export function docsScreen(state) {
-  // 1. Calculate dynamic progress of required documents
-  const reqDocs = requiredDocs(state);
-  const totalRequired = reqDocs.length;
-  const loadedRequired = reqDocs.filter(doc => doc.file || doc.status === "Cargado" || doc.status === "Aprobado" || doc.type === "ok").length;
-  const pendingDocs = reqDocs.filter(doc => !doc.file && doc.status !== "Cargado" && doc.status !== "Aprobado" && doc.type !== "ok");
-  const progressPercent = totalRequired > 0 ? (loadedRequired / totalRequired) * 100 : 0;
+  const { totalRequired, loadedRequired, pendingDocs, progressPercent } = getDocumentProgress(state);
 
   // 2. Inline question if travelWithMinors is not defined (null)
   let inlineMinorsHtml = "";
@@ -33,14 +29,7 @@ export function docsScreen(state) {
     `;
   }
 
-  // 3. Filter documents to render based on conditionals
-  const docsToRender = state.docs.filter(doc => {
-    // Hide minors authorization card if traveling with minors is false or null
-    if (doc.id === "minor") {
-      return state.trip.minors === true;
-    }
-    return true;
-  });
+  const docsToRender = getVisibleTripDocuments(state);
 
   // 4. Conditional SAG document card (if they declared SAG products)
   let sagDocHtml = "";
@@ -171,10 +160,10 @@ export function docsScreen(state) {
 
   return appFrame(`
     <div class="header-group">
-      ${topbar("Subir documentos", { backTo: "trip", bell: true })}
+      ${topbar("Subir documentos", { backTo: "trip", bell: true, role: state.role })}
       ${stepper(["Viaje", "Documentos", "Seguimiento"], 2)}
     </div>
-    <section class="sheet" style="padding-bottom:80px">
+    <section class="sheet" style="padding-bottom: calc(80px + env(safe-area-inset-bottom, 0px))">
       <!-- 1. Progress Banner -->
       <article class="card soft progress-summary" style="padding:14px; margin-bottom:14px; border-radius:13px; background:#fff; border:1px solid var(--line); box-shadow:0 4px 12px rgba(5,32,78,0.03)">
         <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px">
@@ -242,6 +231,5 @@ export function docsScreen(state) {
     ${getMinorsModalHtml(state)}
     ${getSagModalHtml(state)}
     ${previewModalHtml}
-  `, state.screen);
+  `, state.screen, frameOptions(state));
 }
-

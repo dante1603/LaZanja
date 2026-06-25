@@ -1,4 +1,4 @@
-import { appFrame, stepper, topbar } from "../components/chrome.js";
+import { appFrame, frameOptions, stepper, topbar } from "../components/chrome.js";
 import { STATUS, statusLabels } from "../state/appState.js";
 
 function formatEventTime(atString) {
@@ -193,7 +193,7 @@ export function detailScreen(state) {
     </style>
 
     <div class="header-group">
-      ${topbar("Seguimiento del trámite", { backTo: "history" })}
+      ${topbar("Seguimiento del trámite", { backTo: "history", role: state.role })}
       ${stepper(["Viaje", "Documentos", "Seguimiento"], 3)}
     </div>
     <section class="content">
@@ -221,5 +221,5 @@ export function detailScreen(state) {
       </article>
       ${buttonsHtml}
     </section>
-  `, state.screen);
+  `, state.screen, frameOptions(state));
 }
