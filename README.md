@@ -1,5 +1,7 @@
 # La Grieta - prototipo app viajero
 
+El diagnóstico del estado actual y la ruta de trabajo hacia la entrega final están en [`docs/FINAL_DELIVERY_PLAN.md`](docs/FINAL_DELIVERY_PLAN.md).
+
 Prototipo funcional mobile-first para probar en navegador el flujo del viajero:
 
 1. Inicio de sesión.

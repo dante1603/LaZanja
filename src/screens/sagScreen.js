@@ -81,7 +81,7 @@ export function sagScreen(state) {
       
       <div class="button-row">
         <button class="btn secondary" data-go="docs">Volver</button>
-        <button class="btn" data-go="detail">Guardar y continuar</button>
+        <button class="btn" data-submit-case="true">Enviar a revision</button>
       </div>
     </section>
   `, state.screen);

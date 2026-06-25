@@ -48,7 +48,10 @@ export function loginScreen(state) {
           <div class="inputs-container-inner">
             <div class="field">
               <label for="login-id">RUT o correo</label>
-              <input id="login-id" value="viajero@lazanja.cl" autocomplete="username" />
+              <select id="login-id" autocomplete="username">
+                <option value="traveler">viajero@lazanja.cl</option>
+                <option value="officer">funcionario@lazanja.cl</option>
+              </select>
             </div>
             <div class="field">
               <label for="login-password">Contraseña</label>
@@ -57,7 +60,7 @@ export function loginScreen(state) {
           </div>
         </div>
         <button class="btn btn-login" data-action="login-click">Iniciar sesión</button>
-        <button class="btn btn-claveunica" data-go="home" aria-label="Entrar con ClaveÚnica">
+        <button class="btn btn-claveunica" data-action="login-click" data-role="traveler" aria-label="Entrar como viajero con ClaveUnica demo">
           <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 645.06 147.79">
             <path d="M572.62,85.49h-.4c-1.5,0-2.9.9-3.5,2.2h0s-.1.2-.2.5v-.1.1-.1c-.4.7-.9,1.6-1.2,2h0c-3,4.2-7.8,7-13.2,7-8.7,0-16.2-7.6-16.2-16.4,0-9.3,7.4-16.5,16.2-16.5,5.6,0,10.7,2.9,13.7,7.6.3.4.4.7.5.8-.1-.1-.1-.2-.1-.4.5,1.6,2,2.7,3.8,2.7h.2c2.2,0,4-1.8,4-4v-.1c0-.9-.3-1.8-.9-2.5-4.1-6.7-11.7-11.4-21-11.4-14.3,0-24.5,10.9-24.5,23.7s9.7,23.6,24.5,23.6c10.2,0,18.1-5.1,21.9-12.7h0c.3-.6.5-1.2.5-1.9v-.4c-.2-1.9-1.9-3.7-4.1-3.7Z" style="fill:#557ebf;"/>
             <path d="M634.82,80.89v-.3c0-12.6-10.1-23.4-24.2-23.4s-24.2,10.8-24.2,23.4,9.6,23.3,24.2,23.3c6.6,0,12.4-2.2,16.5-5.8v2.5h0c.1,2.1,1.7,3.8,3.8,3.8s3.8-1.7,3.8-3.8h0v-19.7h.1ZM610.72,96.69c-8.5,0-16-7.5-16-16.1,0-9.2,7.3-16.2,16-16.2s16,6.9,16,16.2c-.1,8.6-7.4,16.1-16,16.1Z" style="fill:#557ebf;"/>
